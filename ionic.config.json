@@ -1,0 +1,7 @@
+{
+  "name": "chat-2-me",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
