@@ -10,6 +10,7 @@ import { Person } from './IPerson';
 export class DiscoverPage implements OnInit {
   items: Person[] = [
     {
+      id: 1,
       name: 'Name 1',
       description:
         'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.',
@@ -20,6 +21,7 @@ export class DiscoverPage implements OnInit {
       ],
     },
     {
+      id: 2,
       name: 'Name 2',
       description: 'Hello guys.',
       images: [
@@ -28,6 +30,7 @@ export class DiscoverPage implements OnInit {
       ],
     },
     {
+      id: 3,
       name: 'Name 3',
       description: 'Hello guys.',
       images: ['https://ionicframework.com/docs/img/demos/card-media.png'],

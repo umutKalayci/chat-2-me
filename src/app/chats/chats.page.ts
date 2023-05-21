@@ -10,6 +10,7 @@ export class ChatsPage {
   constructor() {}
   persons: Person[] = [
     {
+      id: 1,
       name: 'Name 1',
       description:
         'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.',
@@ -20,6 +21,7 @@ export class ChatsPage {
       ],
     },
     {
+      id: 2,
       name: 'Name 2',
       description: 'Hello guys.',
       images: [
@@ -28,12 +30,14 @@ export class ChatsPage {
       ],
     },
     {
+      id: 3,
       name: 'Name 3',
       description: 'Hello guys.',
       images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
     },
     {
-      name: 'Name 3',
+      id: 4,
+      name: 'Name 4',
       description: 'Hello guys.',
       images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
     },
