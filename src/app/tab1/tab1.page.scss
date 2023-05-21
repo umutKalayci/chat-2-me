@@ -1,0 +1,51 @@
+.titleicon {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  display: flex;
+  bottom: 0;
+  align-items: center;
+}
+.item-card {
+  transition-duration: 0.3s;
+  height: calc(100% - 56px);
+  margin: 0;
+  z-index: 1;
+  swiper-container {
+    height: 100%;
+    swiper-slide {
+      img {
+        height: 100%;
+        object-fit: fill;
+      }
+    }
+  }
+  .item-detail {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    width: 100%;
+    background: #0000005e;
+    margin: 0;
+    padding: 10px;
+    ion-card-title {
+      color: white;
+    }
+    ion-card-subtitle {
+      color: rgb(219, 219, 219);
+    }
+  }
+}
+.action-buttons {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 56px;
+  padding: 0;
+  ion-col {
+    padding: 0;
+    ion-button {
+      margin: 0;
+    }
+  }
+}
