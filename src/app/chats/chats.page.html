@@ -8,7 +8,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-list lines="full">
-    <ion-item href="#" *ngFor="let person of persons" color="light">
+    <ion-item routerLink="chat/x" *ngFor="let person of persons" color="light">
       <ion-avatar slot="start">
         <img alt="Silhouette of a person's head" [src]="person.images[0]" />
       </ion-avatar>
