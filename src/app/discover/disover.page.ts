@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import Swiper from 'swiper';
+import { Person } from './IPerson';
 
 @Component({
   selector: 'app-disover',
@@ -7,7 +8,7 @@ import Swiper from 'swiper';
   styleUrls: ['disover.page.scss'],
 })
 export class DiscoverPage implements OnInit {
-  items = [
+  items: Person[] = [
     {
       name: 'Name 1',
       description:
@@ -32,13 +33,13 @@ export class DiscoverPage implements OnInit {
       images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
     },
   ];
-  selectedItem;
+  selectedPerson: Person;
   card: any;
   @ViewChild('swiper')
   swiperRef: ElementRef | undefined;
   swiper?: Swiper;
   constructor() {
-    this.selectedItem = this.items[0];
+    this.selectedPerson = this.items[0];
   }
   ngOnInit(): void {
     this.card = document.getElementById('itemCard');
@@ -74,7 +75,7 @@ export class DiscoverPage implements OnInit {
         'style',
         'transform:translateX(0); opacity:1; transition-duration:0.3s;'
       );
-      this.selectedItem =
+      this.selectedPerson =
         this.items[Math.floor(Math.random() * this.items.length)];
       setTimeout(() => {
         this.swiper?.update();

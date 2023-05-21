@@ -1,0 +1,21 @@
+.titleicon {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  display: flex;
+  bottom: 0;
+  align-items: center;
+}
+ion-content {
+  ion-list {
+    padding: 10px 10px;
+    ion-item {
+      margin: 10px 0;
+      border-radius: 15px;
+      ion-avatar {
+        height: 60px;
+        width: 60px;
+      }
+    }
+  }
+}

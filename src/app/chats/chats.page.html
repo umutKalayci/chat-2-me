@@ -1,17 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+    <div class="titleicon">
+      <img alt="logo" height="40px" src="assets/icon/brandLogo.png" />
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-list lines="full">
+    <ion-item href="#" *ngFor="let person of persons" color="light">
+      <ion-avatar slot="start">
+        <img alt="Silhouette of a person's head" [src]="person.images[0]" />
+      </ion-avatar>
+      <ion-label> {{person.name}} </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>
