@@ -2,11 +2,11 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import Swiper from 'swiper';
 
 @Component({
-  selector: 'app-tab1',
-  templateUrl: 'tab1.page.html',
-  styleUrls: ['tab1.page.scss'],
+  selector: 'app-disover',
+  templateUrl: 'disover.page.html',
+  styleUrls: ['disover.page.scss'],
 })
-export class Tab1Page implements OnInit {
+export class DiscoverPage implements OnInit {
   items = [
     {
       name: 'Name 1',
