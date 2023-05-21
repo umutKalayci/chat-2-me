@@ -1,0 +1,20 @@
+.m-left-1vh {
+  margin-left: 1vh;
+}
+ion-footer {
+  padding: 1vh;
+  ion-toolbar {
+    ion-textarea {
+      text-align: center;
+      --padding-start: 2vh;
+      margin: 0.5vh 0;
+      &.has-value {
+        text-align: left;
+      }
+      &.has-focus {
+        text-align: left;
+        --highlight-color: var(--ion-color-primary);
+      }
+    }
+  }
+}
