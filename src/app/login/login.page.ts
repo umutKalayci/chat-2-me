@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { AuthService } from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     private router: Router,
-    // private authService: AuthService,
+    private authService: AuthService,
     private alertController: AlertController
   ) {
     this.initForm();
@@ -44,29 +45,29 @@ export class LoginPage implements OnInit {
     this.login(this.form);
   }
 
-  login(form: FormGroup) {
+  login(form: any) {
     // this.global.showLoader();
-    // this.authService
-    //   .login(form.value.email, form.value.password)
-    //   .then((data: any) => {
-    //     console.log(data);
-    //     this.router.navigateByUrl('/home');
-    //     // this.global.hideLoader();
-    //     form.reset();
-    //   })
-    //   .catch((e: any) => {
-    //     console.log(e);
-    //     // this.global.hideLoader();
-    //     let msg: string = 'Could not sign you in, please try again.';
-    //     if (e.code == 'auth/user-not-found')
-    //       msg = 'E-mail address could not be found';
-    //     else if (e.code == 'auth/wrong-password')
-    //       msg = 'Please enter a correct password';
-    //     this.showAlert(msg);
-    //   });
+    this.authService
+      .login(form.value.email, form.value.password)
+      .then((data) => {
+        console.log(data);
+        this.router.navigateByUrl('/');
+        // this.global.hideLoader();
+        form.reset();
+      })
+      .catch((e) => {
+        console.log(e);
+        // this.global.hideLoader();
+        let msg: string = 'Could not sign you in, please try again.';
+        if (e.code == 'auth/user-not-found')
+          msg = 'E-mail address could not be found';
+        else if (e.code == 'auth/wrong-password')
+          msg = 'Please enter a correct password';
+        this.showAlert(msg);
+      });
   }
 
-  async showAlert(msg: string) {
+  async showAlert(msg: any) {
     const alert = await this.alertController.create({
       header: 'Alert',
       // subHeader: 'Important message',
