@@ -40,5 +40,6 @@ export class ChatPage implements OnInit {
       sender: 1,
       message: this.message,
     });
+    this.message = '';
   }
 }
