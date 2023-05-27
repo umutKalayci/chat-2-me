@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
@@ -12,12 +12,20 @@ import { AuthService } from '../../services/auth/auth.service';
 export class SignupPage implements OnInit {
   signupForm!: FormGroup;
   isTypePassword: boolean = true;
-  isLoading: boolean = false;
+  _isLoading: boolean = false;
+  get isLoading() {
+    return this._isLoading;
+  }
+  set isLoading(value: boolean) {
+    value ? this.showLoader() : this.hideLoader();
+    this._isLoading = value;
+  }
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingCtrl: LoadingController
   ) {
     this.initForm();
   }
@@ -36,32 +44,21 @@ export class SignupPage implements OnInit {
     });
   }
 
-  onChange() {
-    this.isTypePassword = !this.isTypePassword;
-  }
-
   onSubmit() {
     if (!this.signupForm.valid) return;
-    console.log(this.signupForm.value);
     this.register(this.signupForm);
   }
 
-  register(form: any) {
-    // this.global.showLoader();
+  register(form: FormGroup) {
     this.isLoading = true;
-    console.log(form.value);
     this.authService
       .register(form.value)
-      .then((data: any) => {
-        console.log(data);
-        this.router.navigateByUrl('/home');
-        // this.global.hideLoader();
+      .then((data: { id: string }) => {
         this.isLoading = false;
         form.reset();
+        this.router.navigateByUrl('/pages/disover');
       })
       .catch((e: any) => {
-        console.log(e);
-        // this.global.hideLoader();
         this.isLoading = false;
         let msg: string = 'Could not sign you up, please try again.';
         if (e.code == 'auth/email-already-in-use') {
@@ -71,14 +68,25 @@ export class SignupPage implements OnInit {
       });
   }
 
-  async showAlert(msg: any) {
+  async showAlert(msg: string) {
     const alert = await this.alertController.create({
-      header: 'Alert',
-      // subHeader: 'Important message',
+      header: 'Warning',
       message: msg,
       buttons: ['OK'],
     });
-
     await alert.present();
+  }
+
+  showLoader() {
+    this.loadingCtrl
+      .create({
+        message: 'Loading...',
+      })
+      .then((response) => {
+        response.present();
+      });
+  }
+  hideLoader() {
+    this.loadingCtrl.dismiss();
   }
 }

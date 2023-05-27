@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../services/auth/auth.service';
 
 @Component({
@@ -12,12 +12,20 @@ import { AuthService } from '../services/auth/auth.service';
 export class LoginPage implements OnInit {
   form!: FormGroup;
   isTypePassword: boolean = true;
-  isLogin = false;
+  _isLoading: boolean = false;
+  get isLoading() {
+    return this._isLoading;
+  }
+  set isLoading(value: boolean) {
+    value ? this.showLoader() : this.hideLoader();
+    this._isLoading = value;
+  }
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingCtrl: LoadingController
   ) {
     this.initForm();
   }
@@ -35,29 +43,22 @@ export class LoginPage implements OnInit {
     });
   }
 
-  onChange() {
-    this.isTypePassword = !this.isTypePassword;
-  }
-
   onSubmit() {
     if (!this.form.valid) return;
-    console.log(this.form.value);
     this.login(this.form);
   }
 
-  login(form: any) {
-    // this.global.showLoader();
+  login(form: FormGroup) {
+    this.isLoading = true;
     this.authService
       .login(form.value.email, form.value.password)
       .then((data) => {
-        console.log(data);
-        this.router.navigateByUrl('/');
-        // this.global.hideLoader();
+        this.isLoading = false;
+        this.router.navigateByUrl('/pages/disover');
         form.reset();
       })
       .catch((e) => {
-        console.log(e);
-        // this.global.hideLoader();
+        this.isLoading = false;
         let msg: string = 'Could not sign you in, please try again.';
         if (e.code == 'auth/user-not-found')
           msg = 'E-mail address could not be found';
@@ -67,14 +68,25 @@ export class LoginPage implements OnInit {
       });
   }
 
-  async showAlert(msg: any) {
+  async showAlert(msg: string) {
     const alert = await this.alertController.create({
-      header: 'Alert',
-      // subHeader: 'Important message',
+      header: 'Warning',
       message: msg,
       buttons: ['OK'],
     });
-
     await alert.present();
+  }
+
+  showLoader() {
+    this.loadingCtrl
+      .create({
+        message: 'Loading...',
+      })
+      .then((response) => {
+        response.present();
+      });
+  }
+  hideLoader() {
+    this.loadingCtrl.dismiss();
   }
 }

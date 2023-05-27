@@ -28,7 +28,7 @@
 
         <ion-item class="ion-margin-vertical">
           <ion-icon
-            (click)="onChange()"
+            (click)="isTypePassword=!isTypePassword"
             [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'"
             slot="end"
             [color]="isTypePassword ? 'medium' : 'primary'"

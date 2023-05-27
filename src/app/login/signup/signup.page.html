@@ -3,14 +3,12 @@
   <div class="circleBase type2 circle1"></div>
   <div class="circleBase type1"></div>
   <div class="circleBase type2 circle2"></div>
-
   <ion-label class="welcomeMessage">
     <ion-text color="light">Hello,</ion-text>
     <ion-text color="light">
       <p>Sign Up!</p>
     </ion-text>
   </ion-label>
-
   <ion-icon
     name="arrow-back-outline"
     color="light"
@@ -18,6 +16,7 @@
     routerLink="/login"
   >
   </ion-icon>
+
   <ion-content class="login-content">
     <img width="200px" src="../../assets/icon/brandLogo.png" />
     <form [formGroup]="signupForm">
@@ -50,7 +49,7 @@
 
         <ion-item class="ion-margin-vertical">
           <ion-icon
-            (click)="onChange()"
+            (click)="isTypePassword=!isTypePassword"
             [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'"
             slot="end"
             [color]="isTypePassword ? 'medium' : 'primary'"
