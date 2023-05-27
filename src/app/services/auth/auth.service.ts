@@ -14,7 +14,7 @@ import { ApiService } from '../api/api.service';
   providedIn: 'root',
 })
 export class AuthService {
-  public _uid = new BehaviorSubject<any>(null);
+  public _uid = new BehaviorSubject<string>('');
   currentUser: any;
 
   constructor(private fireAuth: Auth, private apiService: ApiService) {}
@@ -26,10 +26,7 @@ export class AuthService {
         email,
         password
       );
-      console.log(response);
-      if (response?.user) {
-        this.setUserData(response.user.uid);
-      }
+      if (response?.user) this.setUserData(response.user.uid);
     } catch (e) {
       throw e;
     }
@@ -42,12 +39,11 @@ export class AuthService {
     return this.currentUser?.uid;
   }
 
-  setUserData(uid: any) {
+  setUserData(uid: string) {
     this._uid.next(uid);
   }
 
   randomIntFromInterval(min: any, max: any) {
-    // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
@@ -58,13 +54,12 @@ export class AuthService {
         formValue.email,
         formValue.password
       );
-      console.log('registered user: ', registeredUser);
-      const data = {
-        email: formValue.email,
-        name: formValue.username,
-        uid: registeredUser.user.uid,
-        photo: 'https://i.pravatar.cc/' + this.randomIntFromInterval(200, 400),
-      };
+      // const data = {
+      //   email: formValue.email,
+      //   name: formValue.username,
+      //   uid: registeredUser.user.uid,
+      //   photo: 'https://i.pravatar.cc/' + this.randomIntFromInterval(200, 400),
+      // };
       const userData = {
         id: registeredUser.user.uid,
       };
@@ -85,7 +80,7 @@ export class AuthService {
   async logout() {
     try {
       await this.fireAuth.signOut();
-      this._uid.next(null);
+      this._uid.next('');
       return true;
     } catch (e) {
       throw e;

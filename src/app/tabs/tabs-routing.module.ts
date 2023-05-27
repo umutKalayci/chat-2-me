@@ -4,9 +4,14 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'pages',
+    path: '',
     component: TabsPage,
     children: [
+      {
+        path: '',
+        redirectTo: '/pages/disover',
+        pathMatch: 'full',
+      },
       {
         path: 'disover',
         loadChildren: () =>
@@ -31,17 +36,7 @@ const routes: Routes = [
             (m) => m.SettingsPageModule
           ),
       },
-      {
-        path: '',
-        redirectTo: '/pages/disover',
-        pathMatch: 'full',
-      },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/pages/disover',
-    pathMatch: 'full',
   },
 ];
 
