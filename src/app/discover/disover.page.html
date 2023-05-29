@@ -10,13 +10,19 @@
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
-  <ion-card class="item-card" id="itemCard">
+  <div class="selected-person-spinner" *ngIf="selectedPerson == undefined">
+    <ion-spinner color="primary" name="dots" *ngIf="!nonSuitable"></ion-spinner>
+    <div class="non-suitable" *ngIf="nonSuitable">
+      <ion-icon color="medium" name="sad-outline"></ion-icon>
+      <ion-label color="medium"
+        >We are sorry. No one suitable for you yet</ion-label
+      >
+    </div>
+  </div>
+  <ion-card class="item-card" id="itemCard" *ngIf="selectedPerson != undefined">
     <swiper-container
       (afterinit)="swiperReady()"
       [pagination]="true"
-      direction="vertical"
-      [loop]="true"
       [zoom]="true"
       #swiper
     >

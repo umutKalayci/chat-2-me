@@ -35,7 +35,6 @@ export class AuthService {
   getId() {
     const auth = getAuth();
     this.currentUser = auth.currentUser;
-    console.log(this.currentUser);
     return this.currentUser?.uid;
   }
 
@@ -54,15 +53,26 @@ export class AuthService {
         formValue.email,
         formValue.password
       );
-      // const data = {
-      //   email: formValue.email,
-      //   name: formValue.username,
-      //   uid: registeredUser.user.uid,
-      //   photo: 'https://i.pravatar.cc/' + this.randomIntFromInterval(200, 400),
-      // };
+      const data = {
+        uid: registeredUser.user.uid,
+        email: formValue.email,
+        name: formValue.username,
+        description: '',
+        photo: 'https://i.pravatar.cc/' + this.randomIntFromInterval(200, 400),
+        images: [
+          'https://ionicframework.com/docs/img/demos/card-media.png',
+          'https://ionicframework.com/docs/img/demos/card-media.png',
+          'https://ionicframework.com/docs/img/demos/card-media.png',
+        ],
+      };
+      await this.apiService.setDocument(
+        `users/${registeredUser.user.uid}`,
+        data
+      );
       const userData = {
         id: registeredUser.user.uid,
       };
+      this.setUserData(registeredUser.user.uid);
       return userData;
     } catch (e) {
       throw e;
@@ -90,7 +100,6 @@ export class AuthService {
   checkAuth(): Promise<any> {
     return new Promise((resolve, reject) => {
       onAuthStateChanged(this.fireAuth, (user) => {
-        console.log('auth user: ', user);
         resolve(user);
       });
     });
