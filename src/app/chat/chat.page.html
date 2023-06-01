@@ -13,10 +13,16 @@
 </ion-header>
 
 <ion-content>
-  <div class="chat-spinner" *ngIf="!chatLoading">
+  <div class="chat-spinner" *ngIf="chats == undefined">
     <ion-spinner color="primary" name="bubbles"></ion-spinner>
   </div>
-
+  <div
+    class="no-message-container"
+    *ngIf="chats !=undefined && (chats|async)?.length==0"
+  >
+    <img class="img" src="assets/icon/brandLogo.png" />
+    <ion-label color="medium">Send first message to new friend.</ion-label>
+  </div>
   <ng-container *ngIf="(chats | async) as chat$">
     <ion-list lines="none" *ngIf="chat$.length > 0">
       <ion-item-group
@@ -34,7 +40,12 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar color="light">
-    <ion-textarea rows="1" placeholder="Send message" [(ngModel)]="message">
+    <ion-textarea
+      rows="1"
+      placeholder="Send message"
+      (keyup.enter)="sendMessage()"
+      [(ngModel)]="message"
+    >
     </ion-textarea>
     <ion-buttons slot="end">
       <ion-fab-button

@@ -12,6 +12,24 @@
     height: 50px;
   }
 }
+.no-message-container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  height: 100%;
+
+  flex-wrap: wrap;
+  .img {
+    width: 150px;
+    filter: grayscale(1);
+    margin-bottom: 1vh;
+  }
+  ion-label {
+    width: 100%;
+    text-align: center;
+  }
+}
 ion-footer {
   padding: 1vh;
   ion-toolbar {

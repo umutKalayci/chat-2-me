@@ -22,7 +22,6 @@ export class ChatPage implements OnInit {
 
   message: any;
   isLoading = false;
-  chatLoading = false;
   name: string = '';
   chatId: string = '';
   chats!: Observable<any[]>;
@@ -42,7 +41,11 @@ export class ChatPage implements OnInit {
     if (this.route.snapshot.paramMap.get('id')) {
       this.chatId = this.route.snapshot.paramMap.get('id') || '';
       this.chatService.getChatRoomMessages(this.chatId);
+      console.log(this.chats);
+      // setTimeout(() => {
       this.chats = this.chatService.selectedChatRoomMessages;
+      console.log(this.chats);
+      // }, 3000);
     } else {
       this.navCtrl.back();
       return;
@@ -51,7 +54,6 @@ export class ChatPage implements OnInit {
 
   ngAfterViewInit() {
     this.messageItems.changes.subscribe(() => {
-      this.chatLoading = true;
       this.cdr.detectChanges();
       setTimeout(() => {
         this.scrollToBottom();
