@@ -6,23 +6,21 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-list lines="full">
-    <ion-item
-      routerLink="chat/{{person.id}}"
-      *ngFor="let person of persons"
-      color="light"
-    >
-      <ion-avatar slot="start">
-        <img alt="Silhouette of a person's head" [src]="person.images[0]" />
-      </ion-avatar>
-      <ion-label>
-        {{person.name}}
-        <p>
-          <ion-text color="medium"> message </ion-text>
-        </p>
-      </ion-label>
-      <ion-text slot="end" color="medium">10:00</ion-text>
+<ion-content [fullscreen]="true" *ngIf="(chatRooms | async) as chats">
+  <ion-list lines="full" *ngIf="chats.length>0">
+    <ion-item *ngFor="let chat of chats" (click)="getChat(chat)" color="light">
+      <ng-container *ngIf="(chat?.user | async) as user">
+        <ion-avatar slot="start">
+          <img alt="{{getUser(user)?.name}}" [src]="getUser(user)?.photo" />
+        </ion-avatar>
+        <ion-label>
+          {{getUser(user)?.name}}
+          <p>
+            <ion-text color="medium"> message </ion-text>
+          </p>
+        </ion-label>
+        <ion-text slot="end" color="medium">10:00</ion-text>
+      </ng-container>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { Person } from '../discover/IPerson';
+import { ChatService } from '../services/chat/chat.service';
+import { Observable, take } from 'rxjs';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-chats',
@@ -7,39 +10,27 @@ import { Person } from '../discover/IPerson';
   styleUrls: ['chats.page.scss'],
 })
 export class ChatsPage {
-  constructor() {}
-  persons: Person[] = [
-    {
-      id: 1,
-      name: 'Name 1',
-      description:
-        'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.',
-      images: [
-        'https://ionicframework.com/docs/img/demos/card-media.png',
-        'https://ionicframework.com/docs/img/demos/card-media.png',
-        'https://ionicframework.com/docs/img/demos/card-media.png',
-      ],
-    },
-    {
-      id: 2,
-      name: 'Name 2',
-      description: 'Hello guys.',
-      images: [
-        'https://ionicframework.com/docs/img/demos/card-media.png',
-        'https://ionicframework.com/docs/img/demos/card-media.png',
-      ],
-    },
-    {
-      id: 3,
-      name: 'Name 3',
-      description: 'Hello guys.',
-      images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
-    },
-    {
-      id: 4,
-      name: 'Name 4',
-      description: 'Hello guys.',
-      images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
-    },
-  ];
+  chatRooms!: Observable<any[]>;
+
+  constructor(private chatService: ChatService, private router: Router) {
+    this.getChats();
+  }
+  getChats() {
+    this.chatService.getChatRooms();
+    this.chatRooms = this.chatService.chatRooms;
+  }
+  getUser(user: any) {
+    return user;
+  }
+  getChat(chat: any) {
+    (chat?.user).pipe(take(1)).subscribe((user_data: any) => {
+      console.log('data: ', user_data);
+      const navData: NavigationExtras = {
+        queryParams: {
+          name: user_data?.name,
+        },
+      };
+      this.router.navigate(['/', 'pages', 'chats', chat?.id], navData);
+    });
+  }
 }
