@@ -24,6 +24,39 @@ export class ChatService {
     return this.users;
   }
 
+  async sendRequest(receiverId: any) {
+    try {
+      const datas = (
+        await this.api.getDocsWithMultiQuery('relationRequests', [
+          this.api.whereQuery('sender', '==', receiverId),
+          this.api.whereQuery('receiver', '==', this.currentUserId),
+        ])
+      ).docs.map((doc: any) => {
+        let data = doc.data();
+        data.id = doc.id;
+        return data;
+      });
+      if (datas.length > 0) {
+        console.log('Match!');
+        for (let i = 0; i < datas.length; i++) {
+          console.log(datas[i].id);
+          this.api.deleteDocument('relationRequests', datas[i].id);
+        }
+        return this.createChatRoom(receiverId);
+      } else {
+        console.log('Send Request');
+        const add = await this.api.addDocument('relationRequests', {
+          sender: this.currentUserId,
+          receiver: receiverId,
+        });
+        console.log(add.id);
+      }
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   async createChatRoom(user_id: any) {
     try {
       let room: any;

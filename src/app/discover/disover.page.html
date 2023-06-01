@@ -7,6 +7,11 @@
 </ion-header>
 
 <ion-content class="ion-padding" scroll-y="false">
+  <app-match-box
+    *ngIf="matchInfo.isMatch"
+    [texts]="['You', 'Match!', 'Click Me!']"
+    (click)="startChat()"
+  ></app-match-box>
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -19,23 +24,28 @@
       >
     </div>
   </div>
-  <ion-card class="item-card" id="itemCard" *ngIf="selectedPerson != undefined">
+  <ion-card
+    class="item-card"
+    [ngStyle]="{'display':selectedPerson ? 'flex':'none'}"
+    id="itemCard"
+    #itemCard
+  >
     <swiper-container
+      #swiper
       (afterinit)="swiperReady()"
       [pagination]="true"
       [zoom]="true"
-      #swiper
     >
       <div class="swiper-pagination"></div>
-      <swiper-slide *ngFor="let imgURL of selectedPerson.images">
+      <swiper-slide *ngFor="let imgURL of selectedPerson?.images">
         <div class="swiper-zoom-container">
           <img alt="Silhouette of mountains" [src]="imgURL" />
         </div>
       </swiper-slide>
     </swiper-container>
     <p class="item-detail">
-      <ion-card-title>{{selectedPerson.name}}</ion-card-title>
-      <ion-card-subtitle>
+      <ion-card-title>{{selectedPerson?.name}}</ion-card-title>
+      <ion-card-subtitle *ngIf="selectedPerson">
         {{selectedPerson.description|slice:0:80}}<span
           *ngIf="selectedPerson.description.length>80"
           >...</span

@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import Swiper from 'swiper';
 import { Person } from './IPerson';
 import { ChatService } from '../services/chat/chat.service';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-disover',
@@ -9,50 +10,28 @@ import { ChatService } from '../services/chat/chat.service';
   styleUrls: ['disover.page.scss'],
 })
 export class DiscoverPage implements OnInit {
-  // items: Person[] = [
-  //   {
-  //     uid: '1',
-  //     name: 'Name 1',
-  //     email: 'a@gmail.com',
-  //     description:
-  //       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.',
-  //     images: [
-  //       'https://ionicframework.com/docs/img/demos/card-media.png',
-  //       'https://ionicframework.com/docs/img/demos/card-media.png',
-  //       'https://ionicframework.com/docs/img/demos/card-media.png',
-  //     ],
-  //   },
-  //   {
-  //     uid: '2',
-  //     email: 'a@gmail.com',
-  //     name: 'Name 2',
-  //     description: 'Hello guys.',
-  //     images: [
-  //       'https://ionicframework.com/docs/img/demos/card-media.png',
-  //       'https://ionicframework.com/docs/img/demos/card-media.png',
-  //     ],
-  //   },
-  //   {
-  //     uid: '3',
-  //     email: 'a@gmail.com',
-  //     name: 'Name 3',
-  //     description: 'Hello guys.',
-  //     images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
-  //   },
-  // ];
   items: Person[] = [];
   selectedPerson: Person | undefined;
-  card: any;
+  @ViewChild('itemCard')
+  card!: any;
+
   @ViewChild('swiper')
-  swiperRef: ElementRef | undefined;
+  swiperRef!: ElementRef;
+
   swiper?: Swiper;
   nonSuitable = false;
 
-  constructor(private chatService: ChatService) {}
+  matchInfo = {
+    isMatch: false,
+    roomId: '',
+  };
+  constructor(private chatService: ChatService, private router: Router) {}
   ngOnInit(): void {
     this.chatService.getUsers().subscribe((data) => {
       this.items = data;
-      this.selectedPerson = this.items[0];
+      console.log(this.items);
+      this.selectedPerson =
+        this.items[Math.floor(Math.random() * this.items.length)];
     });
   }
   swiperReady() {
@@ -61,44 +40,71 @@ export class DiscoverPage implements OnInit {
 
   handleRefresh(event: any) {
     setTimeout(() => {
+      // console.log(this.card.el.style);
+      console.log(this.items);
       event.target.complete();
-      this.selectedPerson =
-        this.items[Math.floor(Math.random() * this.items.length)];
+      this.cardInAnimation();
     }, 2000);
   }
   like() {
-    this.card = document.getElementById('itemCard');
-    this.card.style.transform = 'translateY(100%) scale(0.5)';
-    this.cardInAnimation();
+    this.sendRequest();
   }
+  async sendRequest() {
+    try {
+      const room = await this.chatService.sendRequest(this.selectedPerson?.uid);
+      // this.card = document.getElementById('itemCard');
+      this.card.nativeElement.style.transform = 'translateY(100%) scale(0.5)';
+      if (room?.id) {
+        //Match
+        this.matchInfo.isMatch = true;
+        this.matchInfo.roomId = room.id;
+      } else this.cardInAnimation();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  startChat() {
+    this.matchInfo.isMatch = false;
+    this.cardInAnimation();
+    const navData: NavigationExtras = {
+      queryParams: {
+        name: this.selectedPerson!.name,
+      },
+    };
+    this.router.navigate(
+      ['/', 'pages', 'chats', this.matchInfo.roomId],
+      navData
+    );
+  }
+
   dislike() {
-    this.card = document.getElementById('itemCard');
-    this.card.style.transform = 'translateX(-110%)';
+    this.card.el.style.transform = 'translateX(-110%)';
+    this.items.splice(
+      this.items.findIndex((o) => {
+        return o == this.selectedPerson;
+      }),
+      1
+    );
     this.cardInAnimation();
   }
   cardInAnimation() {
-    this.card.style.opacity = '0';
+    this.card.el.style.opacity = '0';
     setTimeout(() => {
-      this.card.setAttribute(
+      this.card.el.setAttribute(
         'style',
         'transform:translateX(110%); transition-duration:0s;'
       );
     }, 300);
     setTimeout(() => {
-      this.card.setAttribute(
+      this.card.el.setAttribute(
         'style',
         'transform:translateX(0); opacity:1; transition-duration:0.3s;'
-      );
-      this.items.splice(
-        this.items.findIndex((o) => {
-          return o == this.selectedPerson;
-        }),
-        1
       );
       this.selectedPerson =
         this.items[Math.floor(Math.random() * this.items.length)];
       if (this.selectedPerson == undefined) this.nonSuitable = true;
       setTimeout(() => {
+        console.log(this.swiper);
         this.swiper?.update();
         this.swiper?.slideTo(0, 0);
       }, 50);

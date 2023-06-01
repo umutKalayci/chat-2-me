@@ -1,5 +1,6 @@
 import {
   addDoc,
+  deleteDoc,
   collection,
   collectionData,
   doc,
@@ -43,6 +44,10 @@ export class ApiService {
     return addDoc<any>(dataRef, data); //add()
   }
 
+  deleteDocument(path: any, docId: any) {
+    return deleteDoc(doc(this.firestore, path, docId));
+  }
+
   getDocById(path: string) {
     const dataRef = this.docRef(path);
     return getDoc(dataRef);
@@ -53,6 +58,16 @@ export class ApiService {
     if (queryFn) {
       const q = query(dataRef, queryFn);
       dataRef = q;
+    }
+    return getDocs<any>(dataRef); //get()
+  }
+
+  getDocsWithMultiQuery(path: any, queryFn?: any[]) {
+    let dataRef: any = this.collectionRef(path);
+    if (queryFn) {
+      for (let i = 0; i < queryFn.length; i++) {
+        dataRef = query(dataRef, queryFn[i]);
+      }
     }
     return getDocs<any>(dataRef); //get()
   }
