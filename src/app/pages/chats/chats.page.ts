@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Person } from '../discover/IPerson';
-import { ChatService } from '../services/chat/chat.service';
+import { ChatService } from '../../services/chat/chat.service';
 import { Observable, take } from 'rxjs';
 import { NavigationExtras, Router } from '@angular/router';
 

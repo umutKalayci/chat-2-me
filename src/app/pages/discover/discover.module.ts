@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { DiscoverPage } from './disover.page';
 import { DiscoverPageRoutingModule } from './discover-routing.module';
 import { register } from 'swiper/element/bundle';
-import { MatchBoxComponent } from '../components/match-box/match-box.component';
+import { MatchBoxComponent } from '../../components/match-box/match-box.component';
 register();
 @NgModule({
   imports: [IonicModule, CommonModule, FormsModule, DiscoverPageRoutingModule],

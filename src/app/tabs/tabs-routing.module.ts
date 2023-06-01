@@ -15,24 +15,26 @@ const routes: Routes = [
       {
         path: 'disover',
         loadChildren: () =>
-          import('../discover/discover.module').then(
+          import('../pages/discover/discover.module').then(
             (m) => m.DiscoverPageModule
           ),
       },
       {
         path: 'chats',
         loadChildren: () =>
-          import('../chats/chats.module').then((m) => m.ChatsPageModule),
+          import('../pages/chats/chats.module').then((m) => m.ChatsPageModule),
       },
       {
         path: 'chats/:id',
         loadChildren: () =>
-          import('../chat/chat.module').then((m) => m.ChatPageModule),
+          import('../pages/chats/chat/chat.module').then(
+            (m) => m.ChatPageModule
+          ),
       },
       {
         path: 'settings',
         loadChildren: () =>
-          import('../settings/settings.module').then(
+          import('../pages/settings/settings.module').then(
             (m) => m.SettingsPageModule
           ),
       },

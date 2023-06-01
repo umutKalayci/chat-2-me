@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, NavController } from '@ionic/angular';
-import { ChatService } from '../services/chat/chat.service';
+import { ChatService } from '../../../services/chat/chat.service';
 import { Observable } from 'rxjs';
 
 @Component({
