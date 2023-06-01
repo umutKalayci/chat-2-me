@@ -1,0 +1,38 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Your Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <form [formGroup]="profileForm" *ngIf="profileForm">
+      <ion-list>
+        <ion-item disabled="true">
+          <ion-input
+            formControlName="email"
+            label="Email"
+            label-placement="floating"
+            placeholder="Enter your email"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input
+            formControlName="name"
+            label="Name"
+            label-placement="floating"
+            placeholder="Enter your name"
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-textarea
+            formControlName="description"
+            label="Description"
+            placeholder="Type something here"
+          ></ion-textarea>
+        </ion-item>
+        <ion-button (click)="save()" expand="block">Save</ion-button>
+      </ion-list>
+    </form>
+  </ion-card>
+</ion-content>

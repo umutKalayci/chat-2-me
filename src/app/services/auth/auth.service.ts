@@ -17,7 +17,9 @@ export class AuthService {
   public _uid = new BehaviorSubject<string>('');
   currentUser: any;
 
-  constructor(private fireAuth: Auth, private apiService: ApiService) {}
+  constructor(private fireAuth: Auth, private apiService: ApiService) {
+    this.getId();
+  }
 
   async login(email: string, password: string): Promise<any> {
     try {
@@ -111,6 +113,13 @@ export class AuthService {
       return docSnap.data();
     } else {
       throw 'No such document exists';
+    }
+  }
+  async updateUserData(userId: any, data: any) {
+    try {
+      await this.apiService.updateDocument(`users/${userId}`, data);
+    } catch (error) {
+      console.log(error);
     }
   }
 }

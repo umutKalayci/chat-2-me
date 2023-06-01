@@ -3,6 +3,7 @@ import {
   deleteDoc,
   collection,
   collectionData,
+  updateDoc,
   doc,
   docData,
   Firestore,
@@ -39,6 +40,13 @@ export class ApiService {
     return setDoc<any>(dataRef, data); //set()
   }
 
+  updateDocument(
+    path: string,
+    data: { email: any; name: any; uid: string; photo: string }
+  ) {
+    const dataRef = this.docRef(path);
+    return updateDoc<any>(dataRef, data); //set()
+  }
   addDocument(path: any, data: any) {
     const dataRef = this.collectionRef(path);
     return addDoc<any>(dataRef, data); //add()
