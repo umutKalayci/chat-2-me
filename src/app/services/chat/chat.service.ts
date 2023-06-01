@@ -26,7 +26,6 @@ export class ChatService {
 
   async createChatRoom(user_id: any) {
     try {
-      // check for existing chatroom
       let room: any;
       const querySnapshot = await this.api.getDocs(
         'chatRooms',
@@ -40,7 +39,6 @@ export class ChatService {
         item.id = doc.id;
         return item;
       });
-      console.log('exist docs: ', room);
       if (room?.length > 0) return room[0];
       const data = {
         members: [this.currentUserId, user_id],
@@ -57,7 +55,7 @@ export class ChatService {
 
   getChatRooms() {
     // this.currentUserId = this.auth.getId();
-    console.log(this.currentUserId);
+    // console.log(this.currentUserId);
     this.chatRooms = this.api
       .collectionDataQuery(
         'chatRooms',
@@ -65,12 +63,12 @@ export class ChatService {
       )
       .pipe(
         map((data: any[]) => {
-          console.log('room data: ', data);
+          // console.log('room data: ', data);
           data.map((element) => {
             const user_data = element.members.filter(
               (x: string) => x != this.currentUserId
             );
-            console.log(user_data);
+            // console.log(user_data);
             const user = this.api.docDataQuery(`users/${user_data[0]}`, true);
             // const user: any = this.api.getDocById(`users/${user_data[0]}`);
             element.user = user;
@@ -99,7 +97,7 @@ export class ChatService {
         sender: this.currentUserId,
         createdAt: new Date(),
       };
-      console.log(chatId);
+      // console.log(chatId);
       if (chatId) {
         await this.api.addDocument(`chats/${chatId}/messages`, new_message);
       }

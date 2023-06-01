@@ -3,24 +3,34 @@
     <ion-buttons>
       <ion-back-button defaultHref="/pages/chats"> </ion-back-button>
       <ion-item>
-        <ion-avatar>
-          <img alt="Silhouette of a person's head" [src]="person.images[0]" />
-        </ion-avatar>
-        <ion-label class="m-left-1vh"> {{person.name}} </ion-label>
+        <!-- <ion-avatar>
+          <img alt="Silhouette of a person's head" [src]="'sil'" />
+        </ion-avatar> -->
+        <ion-label class="m-left-1vh"> {{name}} </ion-label>
       </ion-item>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list lines="none" *ngIf="(chats) as chat$">
-    <ion-item-group class="chats-group" *ngFor="let chat of chat$">
-      <app-chat-box
-        [chat]="chat"
-        [current_user_id]="currentUserId"
-      ></app-chat-box>
-    </ion-item-group>
-  </ion-list>
+  <div class="chat-spinner" *ngIf="!chatLoading">
+    <ion-spinner color="primary" name="bubbles"></ion-spinner>
+  </div>
+
+  <ng-container *ngIf="(chats | async) as chat$">
+    <ion-list lines="none" *ngIf="chat$.length > 0">
+      <ion-item-group
+        class="chats-group"
+        *ngFor="let chat of chat$; trackBy:trackByIdentify"
+        #messageItem
+      >
+        <app-chat-box
+          [chat]="chat"
+          [current_user_id]="chatService.currentUserId"
+        ></app-chat-box>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
 </ion-content>
 <ion-footer>
   <ion-toolbar color="light">
@@ -35,8 +45,12 @@
       >
         <ion-icon name="send"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button *ngIf="isLoading" size="small" color="primary">
-        <ion-spinner name="crescent" color="white"></ion-spinner>
+      <ion-fab-button *ngIf="isLoading" size="small" style="opacity: 0.7">
+        <ion-spinner
+          class="send-message-spinner"
+          name="crescent"
+          color="white"
+        ></ion-spinner>
       </ion-fab-button>
     </ion-buttons>
   </ion-toolbar>

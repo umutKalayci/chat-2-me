@@ -1,6 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Person } from '../discover/IPerson';
+import { IonContent, NavController } from '@ionic/angular';
+import { ChatService } from '../services/chat/chat.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -8,38 +17,66 @@ import { Person } from '../discover/IPerson';
   styleUrls: ['./chat.page.scss'],
 })
 export class ChatPage implements OnInit {
-  person: Person = {
-    id: 1,
-    name: 'Name 1',
-    description:
-      'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi, temporibus.',
-    images: [
-      'https://ionicframework.com/docs/img/demos/card-media.png',
-      'https://ionicframework.com/docs/img/demos/card-media.png',
-      'https://ionicframework.com/docs/img/demos/card-media.png',
-    ],
-  };
-  name: string = 'Sender';
+  @ViewChild(IonContent, { static: false }) content!: IonContent;
+  @ViewChildren('messageItem') messageItems!: QueryList<any>;
+
   message: any;
   isLoading = false;
-  currentUserId = 1;
-  chats = [
-    { id: 1, sender: 1, message: 'hi' },
-    { id: 2, sender: 2, message: 'hi there!' },
-  ];
+  chatLoading = false;
+  name: string = '';
+  chatId: string = '';
+  chats!: Observable<any[]>;
 
-  constructor(private route: ActivatedRoute) {
-    console.log(this.route.snapshot.paramMap.get('id'));
+  constructor(
+    private route: ActivatedRoute,
+    private navCtrl: NavController,
+    public chatService: ChatService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    const userInfo: any = this.route.snapshot.queryParams;
+    if (userInfo?.name) {
+      this.name = userInfo.name;
+    }
+    if (this.route.snapshot.paramMap.get('id')) {
+      this.chatId = this.route.snapshot.paramMap.get('id') || '';
+      this.chatService.getChatRoomMessages(this.chatId);
+      this.chats = this.chatService.selectedChatRoomMessages;
+    } else {
+      this.navCtrl.back();
+      return;
+    }
   }
 
-  ngOnInit() {}
-
-  sendMessage() {
-    this.chats.push({
-      id: this.chats.length + 1,
-      sender: 1,
-      message: this.message,
+  ngAfterViewInit() {
+    this.messageItems.changes.subscribe(() => {
+      this.chatLoading = true;
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 200);
     });
-    this.message = '';
+  }
+
+  async sendMessage() {
+    if (!this.message || this.message?.trim() == '') return;
+    try {
+      this.isLoading = true;
+      await this.chatService.sendMessage(this.chatId, this.message);
+      this.message = '';
+      this.isLoading = false;
+      this.scrollToBottom();
+    } catch (e) {
+      this.isLoading = false;
+      console.log(e);
+    }
+  }
+  scrollToBottom() {
+    if (this.chats) this.content.scrollToBottom(200);
+  }
+
+  trackByIdentify(index: number, item: any) {
+    return item.message;
   }
 }
