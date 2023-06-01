@@ -6,21 +6,34 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" *ngIf="(chatRooms | async) as chats">
-  <ion-list lines="full" *ngIf="chats.length>0">
-    <ion-item *ngFor="let chat of chats" (click)="getChat(chat)" color="light">
-      <ng-container *ngIf="(chat?.user | async) as user">
-        <ion-avatar slot="start">
-          <img alt="{{getUser(user)?.name}}" [src]="getUser(user)?.photo" />
-        </ion-avatar>
-        <ion-label>
-          {{getUser(user)?.name}}
-          <p>
-            <ion-text color="medium"> message </ion-text>
-          </p>
-        </ion-label>
-        <ion-text slot="end" color="medium">10:00</ion-text>
-      </ng-container>
-    </ion-item>
-  </ion-list>
+<ion-content [fullscreen]="true">
+  <div
+    class="no-message-container"
+    *ngIf="chatRooms !=undefined && (chatRooms|async)?.length==0"
+  >
+    <img class="img" src="assets/icon/brandLogo.png" />
+    <ion-label color="medium">No one yet, like someone.</ion-label>
+  </div>
+  <ng-container *ngIf="(chatRooms | async) as chats">
+    <ion-list lines="full" *ngIf="chats.length>0">
+      <ion-item
+        *ngFor="let chat of chats"
+        (click)="getChat(chat)"
+        color="light"
+      >
+        <ng-container *ngIf="(chat?.user | async) as user">
+          <ion-avatar slot="start">
+            <img alt="{{getUser(user)?.name}}" [src]="getUser(user)?.photo" />
+          </ion-avatar>
+          <ion-label>
+            {{getUser(user)?.name}}
+            <p>
+              <ion-text color="medium"> message </ion-text>
+            </p>
+          </ion-label>
+          <ion-text slot="end" color="medium">10:00</ion-text>
+        </ng-container>
+      </ion-item>
+    </ion-list>
+  </ng-container>
 </ion-content>
