@@ -11,7 +11,19 @@ import { NavigationExtras, Router } from '@angular/router';
 })
 export class DiscoverPage implements OnInit {
   items: Person[] = [];
-  selectedPerson: Person | undefined;
+  _selectedPerson: Person | undefined;
+  get selectedPerson() {
+    return this._selectedPerson;
+  }
+  set selectedPerson(value: any) {
+    this._selectedPerson = value;
+    setTimeout(() => {
+      this.swiper?.update();
+      this.swiper?.slideTo(0, 0);
+    }, 50);
+    if (value == undefined) this.nonSuitable = true;
+  }
+
   @ViewChild('itemCard')
   card!: any;
 
@@ -24,14 +36,29 @@ export class DiscoverPage implements OnInit {
   matchInfo = {
     isMatch: false,
     roomId: '',
+    name: '',
   };
   constructor(private chatService: ChatService, private router: Router) {}
   ngOnInit(): void {
     this.chatService.getUsers().subscribe((data) => {
-      this.items = data;
-      console.log(this.items);
-      this.selectedPerson =
-        this.items[Math.floor(Math.random() * this.items.length)];
+      this.chatService.getChatRooms();
+      let subs = this.chatService.chatRooms.subscribe((res) => {
+        let a: string[] = res.map((res1: any) => {
+          return res1.members[0] == this.chatService.currentUserId
+            ? res1.members[1]
+            : res1.members[0];
+        });
+        this.items = data.filter((d: any) => {
+          return !a.includes(d.uid);
+        });
+        console.log('hi');
+        this.selectedPerson =
+          this.items[Math.floor(Math.random() * this.items.length)];
+        this.cardInAnimation();
+      });
+      setTimeout(() => {
+        subs.unsubscribe();
+      }, 1000);
     });
   }
   swiperReady() {
@@ -43,7 +70,7 @@ export class DiscoverPage implements OnInit {
       // console.log(this.card.el.style);
       console.log(this.items);
       event.target.complete();
-      this.cardInAnimation();
+      this.selectRandomPerson();
     }, 2000);
   }
   like() {
@@ -51,24 +78,25 @@ export class DiscoverPage implements OnInit {
   }
   async sendRequest() {
     try {
+      this.card.el.style.transform = 'translateY(100%) scale(0.5)';
       const room = await this.chatService.sendRequest(this.selectedPerson?.uid);
-      // this.card = document.getElementById('itemCard');
-      this.card.nativeElement.style.transform = 'translateY(100%) scale(0.5)';
       if (room?.id) {
         //Match
         this.matchInfo.isMatch = true;
         this.matchInfo.roomId = room.id;
-      } else this.cardInAnimation();
+        this.matchInfo.name = this.selectedPerson.name;
+      }
+      this.removePerson(this.selectedPerson);
+      this.selectRandomPerson();
     } catch (e) {
       console.log(e);
     }
   }
   startChat() {
     this.matchInfo.isMatch = false;
-    this.cardInAnimation();
     const navData: NavigationExtras = {
       queryParams: {
-        name: this.selectedPerson!.name,
+        name: this.matchInfo.name,
       },
     };
     this.router.navigate(
@@ -76,18 +104,28 @@ export class DiscoverPage implements OnInit {
       navData
     );
   }
-
-  dislike() {
-    this.card.el.style.transform = 'translateX(-110%)';
+  removePerson(person: any) {
     this.items.splice(
       this.items.findIndex((o) => {
-        return o == this.selectedPerson;
+        return o == person;
       }),
       1
     );
+  }
+  dislike() {
+    this.card.el.style.transform = 'translateX(-110%)';
+    this.removePerson(this.selectedPerson);
+    this.selectRandomPerson();
+  }
+  selectRandomPerson() {
+    setTimeout(() => {
+      this.selectedPerson =
+        this.items[Math.floor(Math.random() * this.items.length)];
+    }, 350);
     this.cardInAnimation();
   }
   cardInAnimation() {
+    console.log('log');
     this.card.el.style.opacity = '0';
     setTimeout(() => {
       this.card.el.setAttribute(
@@ -100,14 +138,6 @@ export class DiscoverPage implements OnInit {
         'style',
         'transform:translateX(0); opacity:1; transition-duration:0.3s;'
       );
-      this.selectedPerson =
-        this.items[Math.floor(Math.random() * this.items.length)];
-      if (this.selectedPerson == undefined) this.nonSuitable = true;
-      setTimeout(() => {
-        console.log(this.swiper);
-        this.swiper?.update();
-        this.swiper?.slideTo(0, 0);
-      }, 50);
     }, 350);
   }
 }
