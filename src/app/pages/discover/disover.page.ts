@@ -40,6 +40,7 @@ export class DiscoverPage implements OnInit {
   };
   constructor(private chatService: ChatService, private router: Router) {}
   ngOnInit(): void {
+    this.chatService.getCurrentUserId();
     this.chatService.getUsers().subscribe((data) => {
       this.chatService.getChatRooms();
       let subs = this.chatService.chatRooms.subscribe((res) => {
@@ -48,10 +49,10 @@ export class DiscoverPage implements OnInit {
             ? res1.members[1]
             : res1.members[0];
         });
+        a.push(this.chatService.currentUserId);
         this.items = data.filter((d: any) => {
           return !a.includes(d.uid);
         });
-        console.log('hi');
         this.selectedPerson =
           this.items[Math.floor(Math.random() * this.items.length)];
         this.cardInAnimation();
@@ -125,7 +126,6 @@ export class DiscoverPage implements OnInit {
     this.cardInAnimation();
   }
   cardInAnimation() {
-    console.log('log');
     this.card.el.style.opacity = '0';
     setTimeout(() => {
       this.card.el.setAttribute(
