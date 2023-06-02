@@ -1,5 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -8,25 +15,45 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  profileForm!: FormGroup;
-
+  profileForm = new FormGroup({
+    photo: new FormControl(''),
+    email: new FormControl(''),
+    name: new FormControl(''),
+    description: new FormControl(''),
+    images: new FormArray([]),
+  });
   currentUserId: any;
+
+  imgRes: any;
+
   constructor(private auth: AuthService) {
     this.currentUserId = this.auth.getId();
     this.auth.getUserData(this.currentUserId).then((data) => {
       this.initForm(data);
-      console.log(data);
-      console.log(this.currentUserId);
     });
   }
 
   ngOnInit() {}
 
+  get images(): FormArray {
+    return this.profileForm.get('images') as FormArray;
+  }
+
+  addImage() {
+    this.images.push(new FormControl());
+  }
+  deleteImage(i: any) {
+    this.images.removeAt(i);
+  }
+
   initForm(profileData: any) {
-    this.profileForm = new FormGroup({
-      email: new FormControl(profileData?.email),
-      name: new FormControl(profileData?.name),
-      description: new FormControl(profileData?.description),
+    for (let i = 0; i < profileData.images.length; i++) this.addImage();
+    this.profileForm.setValue({
+      photo: profileData?.photo,
+      email: profileData?.email,
+      name: profileData?.name,
+      description: profileData?.description,
+      images: profileData.images,
     });
   }
   save() {

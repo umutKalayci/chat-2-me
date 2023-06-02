@@ -6,8 +6,45 @@
 
 <ion-content [fullscreen]="true">
   <ion-card>
+    <!-- <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div formArrayName="images">
+        <div *ngFor="let course of images.controls; index as i">
+          <input [formControlName]="i" placeholder="Course" />
+        </div>
+      </div>
+      <br />
+      <button>Submit</button>
+      <br /><br />
+    </form>
+    <button (click)="addCourse()">Add Course</button> -->
     <form [formGroup]="profileForm" *ngIf="profileForm">
+      <!-- <ion-grid>
+        <ion-row>
+          <ion-col text-center>
+            <ion-button (click)="imagePicker()">Select Images</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div class="images-wrapper">
+              <div class="pick-single-image" *ngFor="let image of imgRes">
+                <img src="{{image}}" alt="" srcset="" />
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid> -->
+
       <ion-list>
+        <ion-item>
+          <ion-input
+            formControlName="photo"
+            label="Profil image url"
+            label-placement="floating"
+            placeholder="Enter your profil image url"
+          ></ion-input>
+        </ion-item>
+
         <ion-item disabled="true">
           <ion-input
             formControlName="email"
@@ -28,9 +65,38 @@
           <ion-textarea
             formControlName="description"
             label="Description"
+            labelPlacement="floating"
             placeholder="Type something here"
           ></ion-textarea>
         </ion-item>
+        <div class="add-images-form" formArrayName="images">
+          <ion-item>
+            <ion-label>
+              <h1>Images</h1>
+            </ion-label>
+          </ion-item>
+          <div
+            class="image-item"
+            *ngFor="let image of images.controls; let i = index"
+          >
+            <ion-item appearance="fill">
+              <ion-input [formControlName]="i" placeholder="Image url" />
+            </ion-item>
+            <ion-icon
+              name="close-circle-outline"
+              (click)="deleteImage(i)"
+            ></ion-icon>
+          </div>
+
+          <ion-button
+            shape="round"
+            fill="clear"
+            size="large"
+            (click)="addImage()"
+          >
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-button>
+        </div>
         <ion-button (click)="save()" expand="block">Save</ion-button>
       </ion-list>
     </form>

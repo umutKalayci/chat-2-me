@@ -1,0 +1,17 @@
+.add-images-form {
+  text-align: center;
+  .image-item {
+    display: flex;
+    align-items: center;
+    ion-item {
+      width: 90%;
+    }
+    ion-icon {
+      font-size: 32px;
+    }
+  }
+  ion-button {
+    color: black;
+    margin-top: 1vh;
+  }
+}
