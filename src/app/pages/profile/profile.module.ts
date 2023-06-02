@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePageRoutingModule } from './profile-routing.module';
 
 import { ProfilePage } from './profile.page';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @NgModule({
   imports: [
@@ -17,5 +18,6 @@ import { ProfilePage } from './profile.page';
     ReactiveFormsModule,
   ],
   declarations: [ProfilePage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ProfilePageModule {}

@@ -61,11 +61,7 @@ export class AuthService {
         name: formValue.username,
         description: '',
         photo: 'https://i.pravatar.cc/' + this.randomIntFromInterval(200, 400),
-        images: [
-          'https://ionicframework.com/docs/img/demos/card-media.png',
-          'https://ionicframework.com/docs/img/demos/card-media.png',
-          'https://ionicframework.com/docs/img/demos/card-media.png',
-        ],
+        images: ['https://ionicframework.com/docs/img/demos/card-media.png'],
       };
       await this.apiService.setDocument(
         `users/${registeredUser.user.uid}`,
@@ -74,6 +70,7 @@ export class AuthService {
       const userData = {
         id: registeredUser.user.uid,
       };
+      console.log(registeredUser.user.uid);
       this.setUserData(registeredUser.user.uid);
       return userData;
     } catch (e) {

@@ -13,9 +13,12 @@ export class ChatService {
   public selectedChatRoomMessages!: Observable<any>;
 
   constructor(public auth: AuthService, private api: ApiService) {
-    this.currentUserId = this.auth.getId();
+    this.getCurrentUserId();
   }
-
+  getCurrentUserId() {
+    this.currentUserId = this.auth.getId();
+    return this.currentUserId;
+  }
   getUsers() {
     this.users = this.api.collectionDataQuery(
       'users',

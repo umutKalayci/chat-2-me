@@ -1,6 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Your Profile</ion-title>
+    <ion-progress-bar *ngIf="isLoading" type="indeterminate"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
@@ -97,7 +98,33 @@
             <ion-icon name="add-circle-outline"></ion-icon>
           </ion-button>
         </div>
-        <ion-button (click)="save()" expand="block">Save</ion-button>
+        <div class="coordinate-container">
+          <ion-button color="medium" shape="round" (click)="fetchLocation()">
+            <!-- <ion-icon name="compass-outline"></ion-icon> -->
+            <ion-icon name="locate-outline"></ion-icon>
+          </ion-button>
+          <ion-item disabled="true">
+            <ion-input
+              formControlName="lat"
+              label="lat"
+              label-placement="floating"
+              placeholder="Enter your lat"
+            ></ion-input>
+            <ion-input
+              formControlName="lng"
+              label="lng"
+              label-placement="floating"
+              placeholder="Enter your lng"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="google-map-container">
+          <capacitor-google-map #map></capacitor-google-map>
+        </div>
+        <ion-button [disabled]="isLoading" (click)="save()" expand="block"
+          >Save</ion-button
+        >
       </ion-list>
     </form>
   </ion-card>
