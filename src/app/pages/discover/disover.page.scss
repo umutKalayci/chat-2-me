@@ -31,6 +31,9 @@
     }
   }
 }
+.display-none {
+  display: none;
+}
 .item-card {
   transition-duration: 0.3s;
   height: calc(100% - 56px);
