@@ -3,6 +3,8 @@ import Swiper from 'swiper';
 import { Person } from './IPerson';
 import { ChatService } from '../../services/chat/chat.service';
 import { NavigationExtras, Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { SETTINGS } from '../settings/default-settings';
 
 @Component({
   selector: 'app-disover',
@@ -38,24 +40,73 @@ export class DiscoverPage implements OnInit {
     roomId: '',
     name: '',
   };
-  constructor(private chatService: ChatService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private chatService: ChatService,
+    private router: Router
+  ) {}
   ngOnInit(): void {
     this.chatService.getCurrentUserId();
     this.chatService.getUsers().subscribe((data) => {
       this.chatService.getChatRooms();
       let subs = this.chatService.chatRooms.subscribe((res) => {
-        let a: string[] = res.map((res1: any) => {
-          return res1.members[0] == this.chatService.currentUserId
-            ? res1.members[1]
-            : res1.members[0];
-        });
-        a.push(this.chatService.currentUserId);
-        this.items = data.filter((d: any) => {
-          return !a.includes(d.uid);
-        });
-        this.selectedPerson =
-          this.items[Math.floor(Math.random() * this.items.length)];
-        this.cardInAnimation();
+        let settings: any;
+        this.auth
+          .getUserSettings(this.chatService.currentUserId)
+          .then((userSettings) => {
+            settings = userSettings;
+          })
+          .catch((err) => {
+            settings = SETTINGS;
+          })
+          .finally(() => {
+            console.log(settings);
+            console.log(data);
+            this.auth
+              .getUserData(this.chatService.currentUserId)
+              .then((userInfo) => {
+                this.items = data.filter((d: any) => {
+                  return (
+                    d.age >= settings.ageValue.lower &&
+                    d.age <= settings.ageValue.upper &&
+                    this.calculateDistance(
+                      d.lat,
+                      d.lng,
+                      userInfo.lat,
+                      userInfo.lng
+                    ).toFixed(2) < settings.distanceValue &&
+                    (settings.genderValue.length == 2 ||
+                      settings.genderValue.length == 0 ||
+                      (settings.genderValue[0] == 'male' && !d.gender) ||
+                      (settings.genderValue[0] == 'female' && d.gender))
+                  );
+                });
+                let a: string[] = res.map((res1: any) => {
+                  return res1.members[0] == this.chatService.currentUserId
+                    ? res1.members[1]
+                    : res1.members[0];
+                });
+                console.log(this.items);
+                console.log(a);
+                a.push(this.chatService.currentUserId);
+                this.items = this.items.filter((d: any) => {
+                  return !a.includes(d.uid);
+                });
+                this.selectedPerson =
+                  this.items[Math.floor(Math.random() * this.items.length)];
+                if (this.selectedPerson?.lat) {
+                  this.selectedPerson.distance = this.calculateDistance(
+                    this.selectedPerson.lat,
+                    this.selectedPerson.lng,
+                    userInfo.lat,
+                    userInfo.lng
+                  ).toFixed(2);
+                  console.log(this.selectedPerson.distance);
+                }
+              });
+
+            this.cardInAnimation();
+          });
       });
       setTimeout(() => {
         subs.unsubscribe();
@@ -139,5 +190,32 @@ export class DiscoverPage implements OnInit {
         'transform:translateX(0); opacity:1; transition-duration:0.3s;'
       );
     }, 350);
+  }
+
+  calculateDistance(
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number
+  ): number {
+    const earthRadius = 6371; // Earth's radius in kilometers
+    const dLat = this.degToRad(lat2 - lat1);
+    const dLng = this.degToRad(lng2 - lng1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.degToRad(lat1)) *
+        Math.cos(this.degToRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = earthRadius * c;
+
+    return distance;
+  }
+
+  degToRad(degrees: number): number {
+    return degrees * (Math.PI / 180);
   }
 }

@@ -44,7 +44,10 @@
       </swiper-slide>
     </swiper-container>
     <p class="item-detail">
-      <ion-card-title>{{selectedPerson?.name}}</ion-card-title>
+      <ion-card-title
+        >{{selectedPerson?.name}} ({{selectedPerson?.age}}) ({{
+        selectedPerson?.distance | number :'1.0-0'}}km)</ion-card-title
+      >
       <ion-card-subtitle *ngIf="selectedPerson">
         {{selectedPerson.description|slice:0:80}}<span
           *ngIf="selectedPerson.description.length>80"
