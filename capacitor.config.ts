@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.chat2me.app',
   appName: 'chat-2-me',
   webDir: 'www',
   server: {
