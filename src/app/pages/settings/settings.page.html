@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title> Settings </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="settings-content">
+  <ion-list class="settings-list">
+    <ion-item>
+      <ion-select
+        label="Gender Preference"
+        aria-label="Gender"
+        placeholder="Select gender"
+        [multiple]="true"
+        [(ngModel)]="settings.genderValue"
+      >
+        <ion-select-option value="male">Male</ion-select-option>
+        <ion-select-option value="female">Female</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-toggle [(ngModel)]="settings.discoverValue" [checked]="true">
+        Discover
+      </ion-toggle>
+    </ion-item>
+    <ion-item class="range-item">
+      <ion-range
+        [(ngModel)]="settings.ageValue"
+        [dualKnobs]="true"
+        [pin]="true"
+        [min]="18"
+        [max]="100"
+      >
+        <div slot="label">Age</div>
+      </ion-range>
+    </ion-item>
+    <ion-item class="range-item">
+      <ion-range
+        [(ngModel)]="settings.distanceValue"
+        [pin]="true"
+        [pinFormatter]="rangePinFormatter"
+        [min]="1"
+        label-placement="start"
+      >
+        <div slot="label">Distance</div>
+      </ion-range>
+    </ion-item>
+    <ion-item>
+      <ion-button expand="full" color="success" (click)="saveSettings()"
+        ><ion-icon slot="start" name="save-outline"></ion-icon> Save</ion-button
+      >
+      <ion-button slot="end" expand="full" (click)="logout()"
+        ><ion-icon slot="end" name="log-out-outline"></ion-icon>Log
+        Out</ion-button
+      >
+    </ion-item>
+  </ion-list>
+</ion-content>

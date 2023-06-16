@@ -1,0 +1,10 @@
+.settings-content {
+  .settings-list {
+    ion-item {
+      overflow: inherit;
+      &.range-item {
+        padding-right: 0.5em;
+      }
+    }
+  }
+}

@@ -119,4 +119,20 @@ export class AuthService {
       console.log(error);
     }
   }
+
+  async getUserSettings(id: any) {
+    const docSnap: any = await this.apiService.getDocById(`userSettings/${id}`);
+    if (docSnap?.exists()) {
+      return docSnap.data();
+    } else {
+      throw 'No settings data exists';
+    }
+  }
+  async updateUserSettings(userId: any, data: any) {
+    try {
+      await this.apiService.setDocument(`userSettings/${userId}`, data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
