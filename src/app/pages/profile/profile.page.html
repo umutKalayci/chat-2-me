@@ -36,7 +36,7 @@
         </ion-row>
       </ion-grid> -->
 
-      <ion-list>
+      <ion-list class="profile-items">
         <ion-item>
           <ion-input
             formControlName="photo"
@@ -69,6 +69,24 @@
             labelPlacement="floating"
             placeholder="Type something here"
           ></ion-textarea>
+        </ion-item>
+        <ion-item class="range-item">
+          <ion-range
+            formControlName="age"
+            [pin]="true"
+            [pinFormatter]="agePinFormatter"
+            [min]="18"
+            label-placement="start"
+          >
+            <div slot="label">Age</div>
+          </ion-range>
+        </ion-item>
+        <ion-item class="gender-item">
+          <div class="gender-toggle-container">
+            <ion-icon size="large" name="male-outline"></ion-icon>
+            <ion-toggle formControlName="gender" color="primary"></ion-toggle>
+            <ion-icon size="large" name="female-outline"></ion-icon>
+          </div>
         </ion-item>
         <div class="add-images-form" formArrayName="images">
           <ion-item>

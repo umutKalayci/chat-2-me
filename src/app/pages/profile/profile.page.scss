@@ -16,6 +16,56 @@
   }
 }
 
+.profile-items {
+  ion-item {
+    overflow: inherit;
+    &.gender-item {
+      .gender-toggle-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+      }
+      ion-toggle {
+        width: 85px;
+
+        padding: 12px;
+        --handle-width: 25px;
+        --handle-height: 25px;
+        --handle-max-height: auto;
+        --handle-spacing: 6px;
+        contain: none;
+      }
+      ion-toggle::part(track),
+      ion-toggle.toggle-checked::part(track) {
+        height: 10px;
+        width: 85px;
+        background: #ddd;
+        overflow: visible;
+      }
+
+      ion-toggle::part(handle) {
+        background: #89cff0;
+        border-radius: 100%;
+        box-shadow: none;
+        &::after {
+          content: "";
+          width: 60%;
+          height: 60%;
+          background-color: #3fb0e5;
+          border-radius: 100%;
+        }
+      }
+
+      ion-toggle.toggle-checked::part(handle) {
+        background: #f4c2c2;
+        &::after {
+          background: #f48e8e;
+        }
+      }
+    }
+  }
+}
+
 .coordinate-container {
   display: flex;
   align-items: center;

@@ -25,6 +25,8 @@ export class ProfilePage implements OnInit {
     email: new FormControl(''),
     name: new FormControl(''),
     description: new FormControl(''),
+    age: new FormControl(0),
+    gender: new FormControl(false),
     images: new FormArray([]),
     lat: new FormControl(0),
     lng: new FormControl(0),
@@ -100,6 +102,8 @@ export class ProfilePage implements OnInit {
       email: profileData?.email,
       name: profileData?.name,
       description: profileData?.description,
+      age: profileData?.age || 50,
+      gender: profileData?.gender || false,
       images: profileData.images,
       lat: profileData?.lat || 1,
       lng: profileData?.lng || 1,
@@ -114,5 +118,9 @@ export class ProfilePage implements OnInit {
         console.log('yklendi');
         this.isLoading = false;
       });
+  }
+
+  agePinFormatter(value: number) {
+    return value < 100 ? `${value}` : `99+`;
   }
 }
