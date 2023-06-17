@@ -19,6 +19,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "allowedCommonJsDependencies": ["fast-deep-equal"],
             "assets": [
               {
                 "glob": "**/*",
@@ -124,19 +125,14 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@ionic/angular-toolkit"
-    ]
+    "schematicCollections": ["@ionic/angular-toolkit"]
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

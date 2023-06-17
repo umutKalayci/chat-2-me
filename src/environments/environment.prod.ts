@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  mapsKey: 'AIzaSyBu94P42UwsDNfaYk4FhUJOC9YuI5VAFUo',
   firebase: {
     apiKey: 'AIzaSyAWOMJbB5HZPyeVxsmsxIt0-qauzRh91Ro',
     authDomain: 'chat-2-me-1.firebaseapp.com',
