@@ -41,6 +41,7 @@ export class DiscoverPage implements OnInit {
     roomId: '',
     name: '',
   };
+  idsToRemove: string[] = [];
   currentUserId: string;
   constructor(
     private auth: AuthService,
@@ -50,49 +51,56 @@ export class DiscoverPage implements OnInit {
     this.currentUserId = this.chatService.getCurrentUserId();
   }
   ngOnInit(): void {
+    this.chatService
+      .getChatRooms()
+      .pipe(take(1))
+      .subscribe((chatRooms) => {
+        console.log(chatRooms);
+        this.idsToRemove = chatRooms.map((chatRoom: any) => {
+          return chatRoom.members[0] == this.currentUserId
+            ? chatRoom.members[1]
+            : chatRoom.members[0];
+        });
+        console.log(this.idsToRemove);
+        console.log(this.users);
+
+        this.loadUser();
+      });
+  }
+  loadUser() {
     this.chatService.getUsers().subscribe((users) => {
-      this.chatService
-        .getChatRooms()
-        .pipe(take(1))
-        .subscribe((chatRooms) => {
-          let idsToRemove = chatRooms.map((chatRoom: any) => {
-            return chatRoom.members[0] == this.currentUserId
-              ? chatRoom.members[1]
-              : chatRoom.members[0];
-          });
-          this.users = this.users.filter(
-            (user) => !idsToRemove.includes(user.uid)
-          );
-          let settings: Settings;
-          this.auth
-            .getUserSettings(this.currentUserId)
-            .then((userSettings) => (settings = userSettings))
-            .catch(() => (settings = SETTINGS))
-            .finally(() => {
-              this.auth.getUserData(this.currentUserId).then((userInfo) => {
-                this.users = users.filter((user: any) => {
-                  user.distance = Number(
-                    this.calculateDistance(
-                      user.lat,
-                      user.lng,
-                      userInfo.lat,
-                      userInfo.lng
-                    ).toFixed(2)
-                  );
-                  return (
-                    user.age >= settings.ageValue.lower &&
-                    user.age <= settings.ageValue.upper &&
-                    user.distance < settings.distanceValue &&
-                    settings.genderValue.includes(
-                      user.gender ? 'female' : 'male'
-                    )
-                  );
-                });
-                this.selectedPerson =
-                  this.users[Math.floor(Math.random() * this.users.length)];
-                this.cardInAnimation();
-              });
+      this.users = users.filter(
+        (user: { uid: string }) => !this.idsToRemove.includes(user.uid)
+      );
+      console.log(this.users);
+      let settings: Settings;
+      this.auth
+        .getUserSettings(this.currentUserId)
+        .then((userSettings) => (settings = userSettings))
+        .catch(() => (settings = SETTINGS))
+        .finally(() => {
+          this.auth.getUserData(this.currentUserId).then((userInfo) => {
+            this.users = this.users.filter((user: any) => {
+              user.distance = Number(
+                this.calculateDistance(
+                  user.lat,
+                  user.lng,
+                  userInfo.lat,
+                  userInfo.lng
+                ).toFixed(2)
+              );
+              return (
+                user.age >= settings.ageValue.lower &&
+                user.age <= settings.ageValue.upper &&
+                (user.distance < settings.distanceValue ||
+                  settings.distanceValue == 100) &&
+                settings.genderValue.includes(user.gender ? 'female' : 'male')
+              );
             });
+            this.selectedPerson =
+              this.users[Math.floor(Math.random() * this.users.length)];
+            this.cardInAnimation();
+          });
         });
     });
   }
@@ -103,7 +111,7 @@ export class DiscoverPage implements OnInit {
   handleRefresh(event: any) {
     setTimeout(() => {
       event.target.complete();
-      this.selectRandomPerson();
+      this.loadUser();
     }, 2000);
   }
 
