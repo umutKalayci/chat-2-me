@@ -4,7 +4,8 @@ import { Person } from './IPerson';
 import { ChatService } from '../../services/chat/chat.service';
 import { NavigationExtras, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { SETTINGS } from '../settings/default-settings';
+import { SETTINGS, Settings } from '../settings/default-settings';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-disover',
@@ -12,7 +13,7 @@ import { SETTINGS } from '../settings/default-settings';
   styleUrls: ['disover.page.scss'],
 })
 export class DiscoverPage implements OnInit {
-  items: Person[] = [];
+  users: Person[] = [];
   _selectedPerson: Person | undefined;
   get selectedPerson() {
     return this._selectedPerson;
@@ -40,77 +41,59 @@ export class DiscoverPage implements OnInit {
     roomId: '',
     name: '',
   };
+  currentUserId: string;
   constructor(
     private auth: AuthService,
     private chatService: ChatService,
     private router: Router
-  ) {}
+  ) {
+    this.currentUserId = this.chatService.getCurrentUserId();
+  }
   ngOnInit(): void {
-    this.chatService.getCurrentUserId();
-    this.chatService.getUsers().subscribe((data) => {
-      this.chatService.getChatRooms();
-      let subs = this.chatService.chatRooms.subscribe((res) => {
-        let settings: any;
-        this.auth
-          .getUserSettings(this.chatService.currentUserId)
-          .then((userSettings) => {
-            settings = userSettings;
-          })
-          .catch((err) => {
-            settings = SETTINGS;
-          })
-          .finally(() => {
-            console.log(settings);
-            console.log(data);
-            this.auth
-              .getUserData(this.chatService.currentUserId)
-              .then((userInfo) => {
-                this.items = data.filter((d: any) => {
-                  return (
-                    d.age >= settings.ageValue.lower &&
-                    d.age <= settings.ageValue.upper &&
+    this.chatService.getUsers().subscribe((users) => {
+      this.chatService
+        .getChatRooms()
+        .pipe(take(1))
+        .subscribe((chatRooms) => {
+          let idsToRemove = chatRooms.map((chatRoom: any) => {
+            return chatRoom.members[0] == this.currentUserId
+              ? chatRoom.members[1]
+              : chatRoom.members[0];
+          });
+          this.users = this.users.filter(
+            (user) => !idsToRemove.includes(user.uid)
+          );
+          let settings: Settings;
+          this.auth
+            .getUserSettings(this.currentUserId)
+            .then((userSettings) => (settings = userSettings))
+            .catch(() => (settings = SETTINGS))
+            .finally(() => {
+              this.auth.getUserData(this.currentUserId).then((userInfo) => {
+                this.users = users.filter((user: any) => {
+                  user.distance = Number(
                     this.calculateDistance(
-                      d.lat,
-                      d.lng,
+                      user.lat,
+                      user.lng,
                       userInfo.lat,
                       userInfo.lng
-                    ).toFixed(2) < settings.distanceValue &&
-                    (settings.genderValue.length == 2 ||
-                      settings.genderValue.length == 0 ||
-                      (settings.genderValue[0] == 'male' && !d.gender) ||
-                      (settings.genderValue[0] == 'female' && d.gender))
+                    ).toFixed(2)
+                  );
+                  return (
+                    user.age >= settings.ageValue.lower &&
+                    user.age <= settings.ageValue.upper &&
+                    user.distance < settings.distanceValue &&
+                    settings.genderValue.includes(
+                      user.gender ? 'female' : 'male'
+                    )
                   );
                 });
-                let a: string[] = res.map((res1: any) => {
-                  return res1.members[0] == this.chatService.currentUserId
-                    ? res1.members[1]
-                    : res1.members[0];
-                });
-                console.log(this.items);
-                console.log(a);
-                a.push(this.chatService.currentUserId);
-                this.items = this.items.filter((d: any) => {
-                  return !a.includes(d.uid);
-                });
                 this.selectedPerson =
-                  this.items[Math.floor(Math.random() * this.items.length)];
-                if (this.selectedPerson?.lat) {
-                  this.selectedPerson.distance = this.calculateDistance(
-                    this.selectedPerson.lat,
-                    this.selectedPerson.lng,
-                    userInfo.lat,
-                    userInfo.lng
-                  ).toFixed(2);
-                  console.log(this.selectedPerson.distance);
-                }
+                  this.users[Math.floor(Math.random() * this.users.length)];
+                this.cardInAnimation();
               });
-
-            this.cardInAnimation();
-          });
-      });
-      setTimeout(() => {
-        subs.unsubscribe();
-      }, 1000);
+            });
+        });
     });
   }
   swiperReady() {
@@ -119,16 +102,12 @@ export class DiscoverPage implements OnInit {
 
   handleRefresh(event: any) {
     setTimeout(() => {
-      // console.log(this.card.el.style);
-      console.log(this.items);
       event.target.complete();
       this.selectRandomPerson();
     }, 2000);
   }
-  like() {
-    this.sendRequest();
-  }
-  async sendRequest() {
+
+  async like() {
     try {
       this.card.el.style.transform = 'translateY(100%) scale(0.5)';
       const room = await this.chatService.sendRequest(this.selectedPerson?.uid);
@@ -157,8 +136,8 @@ export class DiscoverPage implements OnInit {
     );
   }
   removePerson(person: any) {
-    this.items.splice(
-      this.items.findIndex((o) => {
+    this.users.splice(
+      this.users.findIndex((o) => {
         return o == person;
       }),
       1
@@ -172,7 +151,7 @@ export class DiscoverPage implements OnInit {
   selectRandomPerson() {
     setTimeout(() => {
       this.selectedPerson =
-        this.items[Math.floor(Math.random() * this.items.length)];
+        this.users[Math.floor(Math.random() * this.users.length)];
     }, 350);
     this.cardInAnimation();
   }

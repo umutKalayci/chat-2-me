@@ -115,6 +115,7 @@ export class ChatService {
           return of(data);
         })
       );
+    return this.chatRooms;
   }
 
   getChatRoomMessages(chatRoomId: any) {
