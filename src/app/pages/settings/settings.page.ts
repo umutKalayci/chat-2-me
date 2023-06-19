@@ -47,5 +47,12 @@ export class SettingsPage {
       .finally(() => {
         console.log('yklendi');
       });
+    this.auth
+      .updateUserDiscoverSetting(this.currentUserId, {
+        isDiscover: this.settings.discoverValue,
+      })
+      .finally(() => {
+        console.log('yklendi');
+      });
   }
 }

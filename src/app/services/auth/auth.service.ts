@@ -135,4 +135,11 @@ export class AuthService {
       console.log(error);
     }
   }
+  async updateUserDiscoverSetting(userId: any, data: any) {
+    try {
+      await this.apiService.updateDocument(`users/${userId}`, data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

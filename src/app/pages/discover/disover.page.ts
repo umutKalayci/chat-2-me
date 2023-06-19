@@ -92,6 +92,7 @@ export class DiscoverPage implements OnInit {
               return (
                 user.age >= settings.ageValue.lower &&
                 user.age <= settings.ageValue.upper &&
+                (user?.isDiscover == true || user?.isDiscover == undefined) &&
                 (user.distance < settings.distanceValue ||
                   settings.distanceValue == 100) &&
                 settings.genderValue.includes(user.gender ? 'female' : 'male')
